@@ -1,7 +1,25 @@
-# claude-personas
+<div align="center">
 
-> 让 Claude Code 按 MBTI 16 型人格和你对话。中英双语，含 Auto 自动切换模式。
-> Give Claude Code a personality. 16 MBTI types, bilingual (中/EN), with an Auto mode that adapts.
+# 🎭 claude-personas
+
+**让 Claude Code 按 MBTI 16 型人格和你对话**
+**Give Claude Code a personality — 16 MBTI types with auto-switching**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-output--style-8A2BE2)](https://docs.claude.com/en/docs/claude-code/output-styles)
+[![Bilingual](https://img.shields.io/badge/docs-中文%20%7C%20English-blue)](README.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Personas](https://img.shields.io/badge/personas-16%20%2B%20Auto-ff69b4)](styles/)
+
+> 中英双语 · 16 型独立行为规则 · 🪄 Auto 综合场景自动切换
+> Bilingual · 16 distinct behavioral rulesets · 🪄 Auto mode adapts to context
+
+**[🚀 快速安装 Quick Install](#-安装--install)** ·
+**[🧩 16 型速查 Personas](#-16-型速查--the-16-personas)** ·
+**[🪄 Auto 模式 Auto Mode](#-auto-模式是怎么工作的--how-auto-works)** ·
+**[💡 推荐玩法 Combos](#-推荐玩法--recommended-combos)**
+
+</div>
 
 ---
 
@@ -121,6 +139,63 @@ Auto embeds a scenario table — based on keywords and emotional signals, it ado
 - "Why AGAIN?!" → INFJ mode (empathy first)
 
 详见 [styles/zh/Auto.md](styles/zh/Auto.md) / [styles/en/Auto.md](styles/en/Auto.md)。
+
+---
+
+## 🎬 同一个问题，四种回答 / Same Question, Four Personalities
+
+**问 / Q**："这段 SQL 有点慢，帮我优化一下 / This SQL is slow, help me optimize"
+
+<table>
+<tr><th>INTJ 建筑师</th><th>INTP 逻辑学家</th></tr>
+<tr><td>
+
+三处问题：(1) `user_id` 没走索引；(2) `N+1` 在 orders 连表上；(3) 用了 `SELECT *`。改写如下：... 预计 QPS 从 50 提到 500。
+
+</td><td>
+
+先确认：你说的"慢"是 P99 慢还是平均慢？两种成因不同。假设 P99，常见三类根因 —— 索引缺失、锁等待、数据倾斜。偏向根因 1，但建议先 `EXPLAIN` 确认。
+
+</td></tr>
+<tr><th>ENTJ 指挥官</th><th>ENTP 辩论家</th></tr>
+<tr><td>
+
+**TL;DR**: 加复合索引 `(user_id, created_at)`，P0 就这一件事。
+- P0: 加索引，10 分钟上线，立降 80%
+- P1: 业务侧分页加上限
+- 风险：建索引走低峰期
+
+</td><td>
+
+等等 —— 你确定瓶颈在这条 SQL 吗？slow log 里它排第几？有时候真正的罪魁是旁边那条每秒跑 1000 次的小查询。先 profile。如果确认就是它，干脆缓存掉？
+
+</td></tr>
+</table>
+
+---
+
+## 🗺️ Roadmap
+
+- [x] NT 分析师四型（INTJ / INTP / ENTJ / ENTP）
+- [x] NF 外交官四型（INFJ / INFP / ENFJ / ENFP）
+- [x] SJ 守护者四型（ISTJ / ISFJ / ESTJ / ESFJ）
+- [x] SP 探险家四型（ISTP / ISFP / ESTP / ESFP）
+- [x] 🪄 Auto 综合场景自动切换
+- [x] 中英双语 / Bilingual (zh + en)
+- [ ] `/persona random` 每日随机人格 / daily random persona
+- [ ] `/persona match` 根据 git log 推荐人格 / recommend persona from git history
+- [ ] 16 宫格对照图 / 16-grid comparison chart (PNG)
+- [ ] 社区贡献的第 17 型（你的本命人格版本）/ community-contributed 17th type
+
+## 🤝 贡献 / Contributing
+
+欢迎提 PR 贡献新的人格变体、修正行为规则、翻译或补全。见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+Contributions welcome — new persona variants, behavior tweaks, translations. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## ⭐ Star History
+
+如果觉得好玩给个 Star 支持下 · If you find it fun, a star means a lot.
 
 ---
 
