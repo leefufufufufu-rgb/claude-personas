@@ -1,29 +1,53 @@
 #!/usr/bin/env bash
 # claude-personas installer
-# 把 styles/*.md 安装到 ~/.claude/output-styles/
+# Installs persona styles into ~/.claude/output-styles/
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="$HOME/.claude/output-styles"
 
-echo "→ 目标目录: $TARGET_DIR"
+# Parse language preference
+LANG_ARG="${1:-both}"
+
+case "$LANG_ARG" in
+  zh)   LANGS=("zh") ;;
+  en)   LANGS=("en") ;;
+  both) LANGS=("zh" "en") ;;
+  *)
+    echo "Usage: $0 [zh|en|both]"
+    echo "  zh    Install Chinese personas only"
+    echo "  en    Install English personas only"
+    echo "  both  Install both (default)"
+    exit 1
+    ;;
+esac
+
+echo "→ Target: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
 
 count=0
-for style in "$SCRIPT_DIR"/styles/*.md; do
-  name=$(basename "$style")
-  cp "$style" "$TARGET_DIR/$name"
-  echo "  ✓ $name"
-  count=$((count+1))
+for lang in "${LANGS[@]}"; do
+  src_dir="$SCRIPT_DIR/styles/$lang"
+  [ ! -d "$src_dir" ] && { echo "  skip: $src_dir not found"; continue; }
+
+  for style in "$src_dir"/*.md; do
+    [ -e "$style" ] || continue
+    name=$(basename "$style" .md)
+    # Suffix with language to avoid conflicts
+    target="$TARGET_DIR/${name}-${lang}.md"
+    cp "$style" "$target"
+    echo "  ✓ ${name}-${lang}.md"
+    count=$((count+1))
+  done
 done
 
 echo ""
-echo "完成：已安装 $count 个人格到 $TARGET_DIR"
+echo "Done: $count personas installed to $TARGET_DIR"
 echo ""
-echo "使用方法："
-echo "  1. 在 Claude Code 中运行 /output-style"
-echo "  2. 选择想要的人格（INTJ / INTP / ENTJ / ENTP）"
-echo "  3. 开始对话，体验不同风格"
+echo "Usage:"
+echo "  1. In Claude Code, run /output-style"
+echo "  2. Pick a persona (e.g. INTJ-zh or INTJ-en, or Auto-zh for auto-switching)"
+echo "  3. Chat and enjoy"
 echo ""
-echo "卸载：rm $TARGET_DIR/{INTJ,INTP,ENTJ,ENTP}.md"
+echo "Uninstall: rm $TARGET_DIR/{INTJ,INTP,ENTJ,ENTP,INFJ,INFP,ENFJ,ENFP,ISTJ,ISFJ,ESTJ,ESFJ,ISTP,ISFP,ESTP,ESFP,Auto}-{zh,en}.md"
